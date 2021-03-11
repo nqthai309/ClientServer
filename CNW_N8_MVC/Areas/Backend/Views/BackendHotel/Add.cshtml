@@ -1,0 +1,100 @@
+﻿
+@model CNW_N8_MVC.Models.hotel
+@{
+    ViewBag.Title = "Add";
+    Layout = "~/Areas/Backend/Views/Shared/Backend.cshtml";
+}
+
+
+
+<div class="card">
+    <div class="card-header"><strong>Basic Form</strong> Elements</div>
+    <div class="card-body">
+        <form class="form-horizontal" action="/BackendHotel/AddHotel" method="post" enctype="multipart/form-data">
+
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="select1">Địa Điểm</label>
+                <div class="col-md-9">
+                    <select class="form-control" id="location_id" name="location_id">
+
+                        <option selected="selected" value="1">Hà Nội</option>
+                        <option value="2">Sài Gòn</option>
+                        <option value="3">Đà Nẵng</option>
+                        <option value="4">Đà Lạt</option>
+                        <option value="5">Sapa</option>
+                        <option value="6">Phú Quốc</option>
+                        <option value="7">Hội An</option>
+                        <option value="8">Nha Trang</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="text-input">Tên Khách Sạn</label>
+                <div class="col-md-9">
+                    <input class="form-control" id="hotel_name" type="text" name="hotel_name" placeholder="Tên Khách Sạn">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="text-input">Ảnh Đại Diện</label>
+                <div class="col-md-9">
+                    <input class="form-control" id="" type="text" name="" placeholder="Ảnh đại diện của khách sạn">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="text-input">Hạng</label>
+                <div class="col-md-9">
+                    <input class="form-control" id="" type="number" name="" placeholder="Hạng của khách sạn">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="text-input">Mô Tả</label>
+                <div class="col-md-9">
+                    <input class="form-control" id="description" type="text" name="description" placeholder="Mô Tả">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="text-input">Chi tiết địa chỉ</label>
+                <div class="col-md-9">
+                    <input class="form-control" id="description" type="text" name="description" placeholder="Chi tiết địa chỉ">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="text-input">Dịch vụ hỗ trợ</label>
+
+                <div class="col-md-9" style="display:inline-flex; flex-direction:row;">
+                    <select class="form-control" id="selectService" name="">
+                        <option>Buffet ăn sáng</option>
+                        <option>Buffet ăn trưa</option>
+                        <option>Buffet ăn chiều</option>
+                    </select>
+                    <input class="form-control" id="priceService" type="number" name="description" placeholder="giá tiền">
+                    <button id="btnThemDV" onclick="addService()" class="btn btn-sm btn-primary" style="width:250px; height:35px; margin-left:5px" type="button"> Thêm d.vụ</button>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="text-input">D.sách dịch vụ</label>
+                <div class="col-md-9">
+                    <select style="width:400px" id="DichVuDaThem" size="5" multiple="multiple">
+                        <option> Buffet ăn sáng - 5000 </option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="color:red; font-size:20px; text-align:center" id="divThongBao"></div>
+            <div class="card-footer">
+                <button id="btnThem" class="btn btn-sm btn-primary" type="submit"> Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="~/Scripts/js/AddHotel.js"></script>
+<script>
+    function addService() {
+        var selectComponent = document.getElementById('selectService');
+        var optionCurrent = selectComponent.options[selectComponent.selectedIndex].value;
+        var priceService = document.getElementById('priceService').value;
+        var option = document.createElement('option')
+        option.text = optionCurrent + ' - ' + priceService
+        document.getElementById('DichVuDaThem').add(option)
+    }
+</script>

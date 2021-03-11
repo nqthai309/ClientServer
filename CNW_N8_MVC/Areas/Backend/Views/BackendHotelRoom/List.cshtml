@@ -1,0 +1,52 @@
+﻿
+@using CNW_N8_MVC.Models;
+@model dynamic
+
+@{
+    ViewBag.Title = "List";
+    Layout = "~/Areas/Backend/Views/Shared/Backend.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header"><i class="fa fa-align-justify"></i> Danh sách Phòng Khách Sạn</div>
+            <div class="card-body">
+                <table class="table table-responsive-sm">
+                    <thead>
+                        <tr>
+                            <th>M.số phòng</th>
+                            <th>Mã khách sạn</th>
+                            <th>Diện tích</th>
+                            <th>Tầng</th>
+                            <th>người/phòng</th>
+                            <th>giường</th>
+                            <th>giá</th>
+                            <th>giá khuyến mãi</th>
+                            <th>tình trạng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i=0; i<5; i++)
+                        {
+                        <tr>
+                            <td>1</td>
+                            <td>1</td>
+                            <td>25m2</td>
+                            <td>tầng 3</td>
+                            <td>2 người</td>
+                            <td>2 giường</td>
+                            <td>50000</td>
+                            <td>30000</td>
+                            <td>Đang kinh doanh</td>
+                            <td><a href="@Url.Action("Edit","BackendHotelRoom", new {})">Sửa</a></td>
+                            <td><a style="color:red" href="@Url.Action("DeleteHotelRoom","BackendHotelRoom",new {})">Xoá</a></td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
