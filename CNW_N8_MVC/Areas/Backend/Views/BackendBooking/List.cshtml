@@ -1,105 +1,83 @@
 ﻿
 @using CNW_N8_MVC.Models;
+@using CNW_N8_MVC.Class;
 @model dynamic
 
 @{
     ViewBag.Title = "List";
     Layout = "~/Areas/Backend/Views/Shared/Backend.cshtml";
 }
+@{ var bookings = ViewData["bookings"] as IEnumerable<ItemBooking>;}
 
-
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-header"><i class="fa fa-align-justify"></i> Danh sách đặt booking Hotel</div>
-                <div class="card-body">
-                    <table class="table table-responsive-sm">
-                        <thead>
-                            <tr>
-                                <th>Tên hotel</th>
-                                <th>Tên khách hàng</th>
-                                <th>Email khách hàng</th>
-                                <th>Từ ngày</th>
-                                <th>Đến ngày</th>
-                                <th>TT D.Vụ</th>
-                                <th>Tổng tiền</th>
-                                <th>Trạng Thái</th>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header"><i class="fa fa-align-justify"></i> Danh sách đặt booking Hotel</div>
+            <div class="card-body">
+                <table class="table table-responsive-sm">
+                    <thead>
+                        <tr style="background-color: #ebebeb">
+                            <th>Booking Id</th>
+                            <th>Customer Id</th>
+                            <th>Time Booking</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng Thái</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (ItemBooking it in bookings)
+                        {
+                            <tr class="clicker">
+                                <td>@it.BookingRoot.Booking_id </td>
+                                <td>@it.BookingRoot.User_id</td>
+                                <td>@it.BookingRoot.Time_booking.ToString().Split(' ')[0]</td>
+                                <td>@it.BookingRoot.Total_booking_price</td>
+                                <td>@it.BookingRoot.Payment_status</td>
+                                @if (it.BookingRoot.Payment_status == "Đang xử lý")
+                                {
+                                    <td><a href="@Url.Action("ConfirmHotelBooking","BackendBooking",new { @id = it.BookingRoot.Booking_id})"> X.Nhận </a></td>
+                                    <td><a class="text-warning" href="@Url.Action("DeleteHotelBooking","BackendBooking",new { @id = it.BookingRoot.Booking_id})"> Hủy </a></td>
+                                } else
+                                {
+                                    <td> </td>
+                                    <td> </td>
+                                }
                             </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (hotel_booking it in Model.hotel_bookings)
+                            foreach (var booking_detail in it.ListDetail)
                             {
-                            <tr>
-                                <td>@it.hotel.hotel_name </td>
-                                <td>@it.customer_name</td>
-                                <td>@it.customer_email</td>
-                                <td>@it.from_date</td>
-                                <td>@it.to_date</td>
-                                <td>@it.thanhTienDichVu</td>
-                                <td>@it.total_price</td>
-                                <td>@it.status_check</td>
-                                @if (it.status_check == "Đang Xử Lý")
-                                {
-                                    <td><a href="@Url.Action("ConfirmHotelBooking","BackendBooking",new { @id = it.id})"> X.Nhận </a></td>
-                                    <td><a class="text-warning" href="@Url.Action("DeleteHotelBooking","BackendBooking",new { @id = it.id})"> Hủy </a></td>
-                                }
-                                else
-                                {
-                                    <td><a class="text-warning" href="@Url.Action("DeleteHotelBooking","BackendBooking",new { @id = it.id})"> Hủy </a></td>
-                                }
+                                <tr class="hidden" style="display: none; background-color: #ebebeb;">
+                                    <td>Tên khách sạn: @booking_detail.Hotel_name</td>
+                                    <td>Mã phòng: @booking_detail.Hotel_rooms_id</td>
+                                    <td>Từ ngày: @booking_detail.From_date.ToString().Split(' ')[0]</td>
+                                    <td>Đến ngày: @booking_detail.To_date.ToString().Split(' ')[0]</td>
+                                    <td>Tổng tiền phòng: @booking_detail.Total_price</td>
+                                    <td> </td>
+                                    <td> </td>
+                                </tr>
+                                <tr class="hidden" style="display: none; background-color: #ebebeb">
+                                    <td>Dịch vụ: @booking_detail.Service_list</td>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td> </td>
+                                    <td>Tổng tiền dịch vụ: @booking_detail.Total_services_price</td>
+                                    <td> </td>
+                                    <td> </td>
+                                </tr>
+                            }
 
-                            </tr>
-                            }
-                        </tbody>
-                    </table>
-                    
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-header"><i class="fa fa-align-justify"></i> Danh sách đặt booking Homestay</div>
-                <div class="card-body">
-                    <table class="table table-responsive-sm">
-                        <thead>
-                            <tr>
-                                <th>Tên homestay</th>
-                                <th>Tên khách hàng</th>
-                                <th>Email khách hàng</th>
-                                <th>Từ ngày</th>
-                                <th>Đến ngày</th>
-                                <th>TT D.Vụ</th>
-                                <th>Tổng tiền</th>
-                                <th>Trạng Thái</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (homestay_booking it in Model.homestay_bookings)
-                            {
-                            <tr>
-                                <td>@it.homestay.homestay_name </td>
-                                <td>@it.customer_name</td>
-                                <td>@it.customer_email</td>
-                                <td>@it.from_date</td>
-                                <td>@it.to_date</td>
-                                <td>@it.thanhTienDichVu</td>
-                                <td>@it.total_price</td>
-                                <td>@it.status_check</td>
-                                @if (it.status_check == "Đang Xử Lý")
-                                {
-                                    <td><a href="@Url.Action("ConfirmHomestayBooking","BackendBooking",new { @id = it.id})"> X.Nhận </a></td>
-                                    <td><a class="text-warning" href="@Url.Action("DeleteHomestayBooking","BackendBooking",new { @id = it.id})"> Hủy </a></td>
-                                }
-                                else
-                                {
-                                    <td><a class="text-warning" href="@Url.Action("DeleteHomestayBooking","BackendBooking",new { @id = it.id})"> Hủy </a></td>
-                                }
-                            </tr>
-                            }
-                        </tbody>
-                    </table>
-                    
-                </div>
+                        }
+                    </tbody>
+                </table>
+
             </div>
         </div>
     </div>
+</div>
+
+<script>
+    $('.clicker').click(function () {
+        $(this).nextUntil('.clicker').slideToggle('normal');
+    });
+</script>

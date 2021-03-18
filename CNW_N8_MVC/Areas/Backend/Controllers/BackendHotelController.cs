@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using System.Dynamic;
 
 using CNW_N8_MVC.Models;
+using CNW_N8_MVC.Class;
 using Newtonsoft.Json;
 
 namespace CNW_N8_MVC.Areas.Backend.Controllers
@@ -15,6 +16,8 @@ namespace CNW_N8_MVC.Areas.Backend.Controllers
         static ServiceReference1.WebService1SoapClient client = new ServiceReference1.WebService1SoapClient();
         private Model1 context = new Model1();
         static int id_Old;
+        static Server.ServerSoapClient server = new Server.ServerSoapClient();
+        public static List<ItemLocation> locList;
         // GET: BackendHotel
         public ActionResult AddHotelRoom(int? id)
         {
@@ -22,14 +25,17 @@ namespace CNW_N8_MVC.Areas.Backend.Controllers
         }
         public ActionResult List()
         {
-            dynamic model = new ExpandoObject();
-            model.hotels = JsonConvert.DeserializeObject<List<hotel>>(client.GetListHotel_BE());
-            return View(model);
+            var hotels = JsonConvert.DeserializeObject<List<ItemHotel>>(server.GetListHotel_BE());
+            ViewData["hotels"] = hotels;
+            return View();
         }
 
         public ActionResult Add()
         {
-            return View();
+            dynamic model = new ExpandoObject();
+            locList = JsonConvert.DeserializeObject<List<ItemLocation>>(server.FE_GetListLocation());
+            model.itemLocations = locList;
+            return View(model);
         }
 
         public ActionResult Edit(string id)
@@ -66,51 +72,34 @@ namespace CNW_N8_MVC.Areas.Backend.Controllers
         }
         public int checkAddHotel(string location_id, string hotel_name, string description, string more_imformation, string price, string sell_price)
         {
-            if (location_id == "" || hotel_name == "" || description == "" || more_imformation == "" || price == "" || sell_price == "")
+            if (location_id == "" || hotel_name == "")
             {
                 return -1;
             }
-            else
-            {
-                int a = int.Parse(location_id);
-                //  var listHotel = context.hotels.Where(h => h.location.id == int.Parse(location_id)).ToList();
-                var listHotel = context.hotels.Where(h => h.location_id == a).ToList();
-
-                foreach (var it in listHotel)
-                {
-                    if (it.hotel_name == hotel_name)
-                    {
-                        return 0;
-                    }
-                }
-                return 1;
-
-            }
+            return 1;
         }
         [HttpPost]
-        public ActionResult AddHotel(hotel hotel)
+        public ActionResult AddHotel(hotels hotel)
         {
             hotel.image_url = "/Content/img/Group 68.png";
             hotel.detail_header_image_url = "/Content/img/hotel-detail.jpg";
-            hotel.more_imformation_image_url = "/Content/img/Group 71.png";
-            client.AddHotel_BE(JsonConvert.SerializeObject(hotel));
-            //context.hotels.Add(hotel);
-            //context.SaveChanges();
+            hotel.star = 0;
+            hotel.booking_count = 0;
+            server.AddHotel_BE(JsonConvert.SerializeObject(hotel));
+            context.hotels.Add(hotel);
+            context.SaveChanges();
             return RedirectToAction("List", "BackendHotel", new { area = "Backend" });
         }
 
         [HttpPost]
-        public ActionResult EditHotel(hotel hotel)
+        public ActionResult EditHotel(hotels hotel)
         {
             hotel.image_url = "/Content/img/Group 68.png";
             hotel.detail_header_image_url = "/Content/img/hotel-detail.jpg";
-            hotel.more_imformation_image_url = "/Content/img/Group 71.png";
             client.EditHotel_BE(id_Old, JsonConvert.SerializeObject(hotel));
-            //context.hotels.Remove(context.hotels.Find(id_Old));
-            //context.hotels.Add(hotel);
-            //context.SaveChanges();
-
-
+            context.hotels.Remove(context.hotels.Find(id_Old));
+            context.hotels.Add(hotel);
+            context.SaveChanges();
             return RedirectToAction("List", "BackendHotel", new { area = "Backend" });
         }
 
