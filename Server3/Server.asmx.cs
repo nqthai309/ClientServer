@@ -501,6 +501,146 @@ namespace Server3
 
         //-------------------TUNG-------------------------//
         //code tai day//
+        [WebMethod]
+        public string GetListBooking_BE()
+        {
+            List<ItemBooking> listBooking = new List<ItemBooking>();
+            
+            var bookingss = from bk in context.bookings
+                          select new
+                          {
+                              bk.booking_id,
+                              bk.payment_status,
+                              bk.time_booking,
+                              bk.user_id,
+                              bk.total_booking_price
+                          };
+            foreach (var it in bookingss)
+            {
+                List<ItemBookingDetail> details = new List<ItemBookingDetail>();
+                var list_detail = from dt in context.booking_hotel_detail
+                                  where dt.booking_id == it.booking_id
+                                  select new
+                                  {
+                                      dt.booking_detail_id,
+                                      dt.booking_id,
+                                      dt.hotels.hotel_name,
+                                      dt.hotel_rooms_id,
+                                      dt.from_date,
+                                      dt.to_date,
+                                      dt.total_price,
+                                      dt.service_list,
+                                      dt.total_services_price
+                                  };
+                foreach (var it2 in list_detail)
+                {
+                    var itemDetail = new ItemBookingDetail();
+                    itemDetail.Booking_detail_id = it2.booking_detail_id;
+                    itemDetail.Booking_id = (int)it2.booking_id;
+                    itemDetail.Hotel_name = it2.hotel_name;
+                    itemDetail.Hotel_rooms_id = (int)it2.hotel_rooms_id;
+                    itemDetail.From_date = it2.from_date.ToString();
+                    itemDetail.To_date = it2.to_date.ToString();
+                    itemDetail.Total_price = (double)it2.total_price;
+                    itemDetail.Service_list = it2.service_list;
+                    itemDetail.Total_services_price = (double)it2.total_services_price;
+
+                    details.Add(itemDetail);
+                }
+
+                var item_booking_root = new ItemBookingRoot();
+                item_booking_root.Booking_id = it.booking_id;
+                item_booking_root.Payment_status = it.payment_status;
+                item_booking_root.Time_booking = it.time_booking.ToString();
+                item_booking_root.Total_booking_price = (double)it.total_booking_price;
+                item_booking_root.User_id = (int)it.user_id;
+
+                listBooking.Add(new ItemBooking(item_booking_root, details));
+
+                
+            }
+            return JsonConvert.SerializeObject(listBooking);
+        }
+
+        [WebMethod]
+        public void ConfirmHotelBooking_BE(int id)
+        {
+            var result = context.bookings.Where(x => x.booking_id == id).SingleOrDefault();
+            result.payment_status = "Đã hoàn thành";
+            context.SaveChanges();
+        }
+
+        [WebMethod]
+        public void DeleteHotelBooking_BE(int id)
+        {
+            var result = context.bookings.Where(x => x.booking_id == id).SingleOrDefault();
+            result.payment_status = "Đã hủy";
+            context.SaveChanges();
+        }
+
+
+        [WebMethod]
+        public string GetListHotel_BE()
+        {
+            List<ItemHotel> itemHotels = new List<ItemHotel>();
+
+            var hotelList = from ht in context.hotels
+                            select
+                            new { ht.hotel_id, ht.image_url, ht.detail_header_image_url, ht.hotel_name, ht.star, ht.description, ht.locations.location_name, ht.location_details };
+
+            for (int i = 0; i < hotelList.Count(); i++)
+            {
+                var it = new ItemHotel();
+                it.HotelID = hotelList.ToList()[i].hotel_id;
+                it.Image_url = hotelList.ToList()[i].image_url;
+                it.Detail_header_image_url = hotelList.ToList()[i].detail_header_image_url;
+                it.HotelName = hotelList.ToList()[i].hotel_name;
+                it.Star = (int)hotelList.ToList()[i].star;
+                it.Description = hotelList.ToList()[i].description;
+                it.AddressDetail = hotelList.ToList()[i].location_details;
+                it.Address = hotelList.ToList()[i].location_name;
+                itemHotels.Add(it);
+
+            }
+            return JsonConvert.SerializeObject(itemHotels);
+        }
+
+        [WebMethod]
+        public void AddHotel_BE(string json)
+        {
+            var hotel = JsonConvert.DeserializeObject<hotels>(json);
+            context.hotels.Add(hotel);
+            context.SaveChanges();
+        }
+
+
+        [WebMethod]
+        public void EditHotel_BE(int id_old, string json)
+        {
+            var row_service = context.hotel_service.Where(x => x.service_id == id_old).ToList();
+            var row_services = row_service;
+            foreach (var item in row_services)
+            {
+                context.hotel_service.Remove(item);
+            }
+            context.hotels.Remove(context.hotels.Find(id_old));
+            var hotel = JsonConvert.DeserializeObject<hotels>(json);
+            context.hotels.Add(hotel);
+            context.SaveChanges();
+            foreach (var item in row_services)
+            {
+                item.hotel_id = hotel.hotel_id;
+                context.hotel_service.Add(item);
+            }
+            context.SaveChanges();
+        }
+
+        [WebMethod]
+        public void DeleteHotel_BE(int id)
+        {
+            context.hotels.Remove(context.hotels.Find(id));
+            context.SaveChanges();
+        }
         //------------------TUNG-------------------------//
     }
 }
