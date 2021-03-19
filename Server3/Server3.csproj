@@ -156,6 +156,9 @@
     <Compile Include="Class\CartItem.cs" />
     <Compile Include="Class\CommentChild.cs" />
     <Compile Include="Class\CommentRoot.cs" />
+    <Compile Include="Class\ItemBooking.cs" />
+    <Compile Include="Class\ItemBookingDetail.cs" />
+    <Compile Include="Class\ItemBookingRoot.cs" />
     <Compile Include="Class\ItemComment.cs" />
     <Compile Include="Class\ItemHotel.cs" />
     <Compile Include="Class\ItemHotelConvenient.cs" />
@@ -191,6 +194,7 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
